@@ -5,4 +5,5 @@ import com.laoumri.springbootbackend.dto.responses.MessageResponse;
 
 public interface PostService {
     MessageResponse createPost(CreatePostRequest request);
+    MessageResponse deletePost(int id);
 }

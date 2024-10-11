@@ -20,7 +20,7 @@ public class Post {
     @Enumerated(EnumType.STRING)
     private EPostType type;
     private String content;
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Media> media;
     @ManyToOne
     @JoinColumn(name = "user_id")
