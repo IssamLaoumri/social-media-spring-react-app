@@ -1,13 +1,15 @@
-package com.laoumri.springbootbackend.security.services;
+package com.laoumri.springbootbackend.security.filters;
 
+import com.laoumri.springbootbackend.security.services.JwtUtils;
+import com.laoumri.springbootbackend.security.services.UserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,7 +18,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-
 
 public class AuthTokenFilter extends OncePerRequestFilter {
     private final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);

@@ -1,12 +1,11 @@
 package com.laoumri.springbootbackend.security;
 
 import com.laoumri.springbootbackend.security.services.AuthEntryPointJwt;
-import com.laoumri.springbootbackend.security.services.AuthTokenFilter;
+import com.laoumri.springbootbackend.security.filters.AuthTokenFilter;
 import com.laoumri.springbootbackend.security.services.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -64,4 +63,6 @@ public class WebSecurityConfig {
     public AuthTokenFilter authTokenFilter(){
         return new AuthTokenFilter();
     }
+
+
 }

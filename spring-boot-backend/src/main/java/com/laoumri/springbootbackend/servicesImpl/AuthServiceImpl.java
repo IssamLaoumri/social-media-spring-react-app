@@ -21,7 +21,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -82,13 +81,13 @@ public class AuthServiceImpl implements AuthService {
                 .firstname(user.getFirstname())
                 .lastname(user.getLastname())
                 .token(jwt)
-                .username(user.getUsername())
+                .username(user.get_username())
                 .build();
     }
 
     private String generateUniqueUsername(String firstname, String lastname) {
         boolean a;
-        String username = firstname+"."+lastname;
+        String username = (firstname+"."+lastname).toLowerCase();
         do{
             boolean check = userRepository.existsBy_username(username);
             if(check){
