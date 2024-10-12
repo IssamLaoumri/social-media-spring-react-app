@@ -21,4 +21,18 @@ public class ReactController {
         reactService.reactToPost(id, reactRequest.getReactType());
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<?> reactToDelete(@PathVariable int id){
+        reactService.deleteReact(id);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<?> reactToUpdate(@PathVariable int id, @Valid @RequestBody ReactRequest reactRequest){
+        reactService.updateReact(id, reactRequest);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
 }
