@@ -1,6 +1,6 @@
 package com.laoumri.springbootbackend.enums;
 
-public enum EMediaType {
+public enum EMedia {
     IMAGE,
     VIDEO,
     AUDIO,

@@ -1,6 +1,6 @@
 package com.laoumri.springbootbackend.entities;
 
-import com.laoumri.springbootbackend.enums.EPostType;
+import com.laoumri.springbootbackend.enums.EPost;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,7 +18,7 @@ public class Post {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @Enumerated(EnumType.STRING)
-    private EPostType type;
+    private EPost type;
     private String content;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Media> media;

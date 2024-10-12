@@ -36,4 +36,11 @@ public class GlobalExceptionHandler {
     public ErrorResponse handleAccessDeniedException(AccessDeniedException ex) {
         return new ErrorResponse(HttpStatus.FORBIDDEN.value(), ex.getMessage());
     }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public ErrorResponse handleResourceNotFoundException(ResourceNotFoundException ex) {
+        return new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
+    }
 }

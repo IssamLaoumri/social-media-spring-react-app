@@ -1,6 +1,6 @@
 package com.laoumri.springbootbackend.entities;
 
-import com.laoumri.springbootbackend.enums.EMediaType;
+import com.laoumri.springbootbackend.enums.EMedia;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,7 +15,7 @@ public class Media {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @Enumerated(EnumType.STRING)
-    private EMediaType type;
+    private EMedia type;
     private String url;
     @ManyToOne
     private Post post;

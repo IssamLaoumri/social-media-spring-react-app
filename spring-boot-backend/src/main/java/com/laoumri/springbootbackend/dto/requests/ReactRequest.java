@@ -1,24 +1,16 @@
 package com.laoumri.springbootbackend.dto.requests;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreatePostRequest {
+public class ReactRequest {
     @NotBlank
-    private String type;
-    @NotEmpty
-    private String content;
-    @Size(min=1)
-    private List<MediaRequest> medias;
+    private String reactType;
 }

@@ -2,14 +2,18 @@ package com.laoumri.springbootbackend.servicesImpl;
 
 import com.laoumri.springbootbackend.Exceptions.AccessDeniedException;
 import com.laoumri.springbootbackend.Exceptions.InvalidEnumException;
+import com.laoumri.springbootbackend.Exceptions.ResourceNotFoundException;
 import com.laoumri.springbootbackend.dto.requests.CreatePostRequest;
 import com.laoumri.springbootbackend.dto.responses.MessageResponse;
 import com.laoumri.springbootbackend.entities.Media;
 import com.laoumri.springbootbackend.entities.Post;
+import com.laoumri.springbootbackend.entities.React;
 import com.laoumri.springbootbackend.entities.User;
-import com.laoumri.springbootbackend.enums.EMediaType;
-import com.laoumri.springbootbackend.enums.EPostType;
+import com.laoumri.springbootbackend.enums.EMedia;
+import com.laoumri.springbootbackend.enums.EPost;
+import com.laoumri.springbootbackend.enums.EReact;
 import com.laoumri.springbootbackend.repositories.PostRepository;
+import com.laoumri.springbootbackend.repositories.ReactRepository;
 import com.laoumri.springbootbackend.repositories.UserRepository;
 import com.laoumri.springbootbackend.services.PostService;
 import jakarta.transaction.Transactional;
@@ -28,6 +32,7 @@ import java.util.Objects;
 public class PostServiceImpl implements PostService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final ReactRepository reactRepository;
     @Override
     public MessageResponse createPost(CreatePostRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -35,9 +40,9 @@ public class PostServiceImpl implements PostService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        EPostType postType;
+        EPost postType;
         try {
-            postType = EPostType.valueOf(request.getType());
+            postType = EPost.valueOf(request.getType());
         } catch (IllegalArgumentException ex) {
             throw new InvalidEnumException("Invalid post type: " + request.getType());
         }
@@ -51,9 +56,9 @@ public class PostServiceImpl implements PostService {
 
         List<Media> medias = request.getMedias().stream()
                 .map(mediaRequest -> {
-                    EMediaType mediaType;
+                    EMedia mediaType;
                     try {
-                        mediaType = EMediaType.valueOf(mediaRequest.getType());
+                        mediaType = EMedia.valueOf(mediaRequest.getType());
                     } catch (IllegalArgumentException ex) {
                         throw new InvalidEnumException("Invalid media type: " + mediaRequest.getType());
                     }
@@ -83,5 +88,7 @@ public class PostServiceImpl implements PostService {
         postRepository.delete(post);
         return new MessageResponse("Post deleted successfully.");
     }
+
+
 
 }
