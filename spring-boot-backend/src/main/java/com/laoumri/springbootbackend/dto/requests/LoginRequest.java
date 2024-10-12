@@ -12,7 +12,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class LoginRequest {
-    @Email(message = "Email is not valid.")
+    @Email
     private String email;
     @NotBlank
     private String password;

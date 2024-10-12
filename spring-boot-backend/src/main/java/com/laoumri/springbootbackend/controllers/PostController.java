@@ -1,7 +1,6 @@
 package com.laoumri.springbootbackend.controllers;
 
 import com.laoumri.springbootbackend.dto.requests.CreatePostRequest;
-import com.laoumri.springbootbackend.dto.requests.ReactRequest;
 import com.laoumri.springbootbackend.dto.responses.MessageResponse;
 import com.laoumri.springbootbackend.services.PostService;
 import jakarta.validation.Valid;

@@ -41,6 +41,17 @@ public class User implements UserDetails {
     @OneToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.LAZY)
     private List<Post> posts = new ArrayList<>();
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "user_friends",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "friend_id")
+    )
+    private Set<User> friends;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<User> requests = new ArrayList<>();
+
     private boolean accountLocked = false;
     private boolean accountExpired = false;
     private boolean credentialsExpired = false;

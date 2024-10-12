@@ -2,18 +2,14 @@ package com.laoumri.springbootbackend.servicesImpl;
 
 import com.laoumri.springbootbackend.Exceptions.AccessDeniedException;
 import com.laoumri.springbootbackend.Exceptions.InvalidEnumException;
-import com.laoumri.springbootbackend.Exceptions.ResourceNotFoundException;
 import com.laoumri.springbootbackend.dto.requests.CreatePostRequest;
 import com.laoumri.springbootbackend.dto.responses.MessageResponse;
 import com.laoumri.springbootbackend.entities.Media;
 import com.laoumri.springbootbackend.entities.Post;
-import com.laoumri.springbootbackend.entities.React;
 import com.laoumri.springbootbackend.entities.User;
 import com.laoumri.springbootbackend.enums.EMedia;
 import com.laoumri.springbootbackend.enums.EPost;
-import com.laoumri.springbootbackend.enums.EReact;
 import com.laoumri.springbootbackend.repositories.PostRepository;
-import com.laoumri.springbootbackend.repositories.ReactRepository;
 import com.laoumri.springbootbackend.repositories.UserRepository;
 import com.laoumri.springbootbackend.services.PostService;
 import jakarta.transaction.Transactional;
@@ -32,7 +28,6 @@ import java.util.Objects;
 public class PostServiceImpl implements PostService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
-    private final ReactRepository reactRepository;
     @Override
     public MessageResponse createPost(CreatePostRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -54,7 +49,7 @@ public class PostServiceImpl implements PostService {
                 .publishedAt(Instant.now())
                 .build();
 
-        List<Media> medias = request.getMedias().stream()
+        List<Media> medias = request.getMedias()!=null ? request.getMedias().stream()
                 .map(mediaRequest -> {
                     EMedia mediaType;
                     try {
@@ -68,7 +63,7 @@ public class PostServiceImpl implements PostService {
                             .post(post)
                             .type(mediaType)
                             .build();
-                }).toList();
+                }).toList() : null;
 
         post.setMedia(medias);
         postRepository.save(post);
