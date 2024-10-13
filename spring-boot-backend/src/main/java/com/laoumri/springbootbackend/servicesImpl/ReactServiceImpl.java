@@ -39,6 +39,7 @@ public class ReactServiceImpl implements ReactService {
         String email = authentication.getName();
         User currentUser = userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post not found"));
+        // Check if the post
         React react = React.builder()
                 .reactedPost(post)
                 .reactedBy(currentUser)

@@ -1,13 +1,10 @@
 package com.laoumri.springbootbackend.controllers;
 
-import com.laoumri.springbootbackend.dto.requests.FriendRequest;
 import com.laoumri.springbootbackend.dto.responses.MessageResponse;
 import com.laoumri.springbootbackend.services.UserRelationshipService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,13 +13,28 @@ import org.springframework.web.bind.annotation.*;
 public class UserRelationshipController {
     private final UserRelationshipService userRelationshipService;
 
-    @PostMapping
-    public ResponseEntity<MessageResponse> addFriend(@Valid @RequestBody FriendRequest request){
-        return ResponseEntity.status(HttpStatus.OK).body(userRelationshipService.addFriend(request));
+    @PostMapping("/send/{receiverId}")
+    public ResponseEntity<MessageResponse> addFriend(@PathVariable int receiverId){
+        return ResponseEntity.status(HttpStatus.OK).body(userRelationshipService.addFriend(receiverId));
     }
 
-    @DeleteMapping
-    public ResponseEntity<MessageResponse> cancelFriendRequest(@Valid @RequestBody FriendRequest request){
-        return ResponseEntity.status(HttpStatus.OK).body(userRelationshipService.cancelFriendRequest(request));
+    @DeleteMapping("/unsent/{receiverId}")
+    public ResponseEntity<MessageResponse> senderCancelFriendRequest(@PathVariable int receiverId){
+        return ResponseEntity.status(HttpStatus.OK).body(userRelationshipService.senderCancelFriendRequest(receiverId));
+    }
+
+    @PostMapping("/accept/{senderId}")
+    public ResponseEntity<MessageResponse> acceptFriendRequest(@PathVariable int senderId){
+        return ResponseEntity.status(HttpStatus.OK).body(userRelationshipService.acceptFriendRequest(senderId));
+    }
+
+    @DeleteMapping("/unfriend/{senderId}")
+    public ResponseEntity<MessageResponse> unfriend(@PathVariable int senderId){
+        return ResponseEntity.status(HttpStatus.OK).body(userRelationshipService.unfriend(senderId));
+    }
+
+    @DeleteMapping("/delete/{senderId}")
+    public ResponseEntity<MessageResponse> receiverDeleteFriendRequest(@PathVariable int senderId){
+        return ResponseEntity.status(HttpStatus.OK).body(userRelationshipService.receiverDeleteFriendRequest(senderId));
     }
 }
