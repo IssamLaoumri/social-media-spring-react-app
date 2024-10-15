@@ -4,8 +4,7 @@ import com.laoumri.springbootbackend.dto.responses.MessageResponse;
 
 public interface UserRelationshipService {
     MessageResponse addFriend(int receiverId);
-    MessageResponse senderCancelFriendRequest(int receiverId);
+    MessageResponse cancelFriendRequest(int requestId);
     MessageResponse acceptFriendRequest(int senderId);
     MessageResponse unfriend(int senderId);
-    MessageResponse receiverDeleteFriendRequest(int senderId);
 }

@@ -1,6 +1,7 @@
 package com.laoumri.springbootbackend.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -38,8 +39,12 @@ public class User implements UserDetails {
     )
     private Set<Role> roles;
 
-    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OrderBy("publishedAt DESC")
     private List<Post> posts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "commentBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Comment> comments = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -49,8 +54,13 @@ public class User implements UserDetails {
     )
     private Set<User> friends;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    private List<User> requests = new ArrayList<>();
+//    @ManyToMany(fetch = FetchType.LAZY)
+//    @JoinTable(
+//            name = "user_requests",
+//            joinColumns = @JoinColumn(name = "requested_id"),
+//            inverseJoinColumns = @JoinColumn(name = "requester_id")
+//    )
+//    private List<User> requests = new ArrayList<>();
 
     private boolean accountLocked = false;
     private boolean accountExpired = false;

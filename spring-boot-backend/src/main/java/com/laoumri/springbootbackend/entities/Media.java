@@ -1,8 +1,11 @@
 package com.laoumri.springbootbackend.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.laoumri.springbootbackend.enums.EMedia;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ManyToAny;
 
 @Entity
 @Table(name = "medias")
@@ -17,6 +20,7 @@ public class Media {
     @Enumerated(EnumType.STRING)
     private EMedia type;
     private String url;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
     private Post post;
 }

@@ -66,8 +66,11 @@ public class PostServiceImpl implements PostService {
                 }).toList() : null;
 
         post.setMedia(medias);
-        postRepository.save(post);
 
+        user.getPosts().add(post);
+
+        postRepository.save(post);
+        //userRepository.save(user);
         return new MessageResponse("Post created successfully.");
     }
 
