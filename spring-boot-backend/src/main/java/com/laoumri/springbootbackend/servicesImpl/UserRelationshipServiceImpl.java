@@ -32,11 +32,12 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
         User receiver = getParamUser(receiverId, currentUser);
 
         // Check if the request is already sent or the requested and requester are already friends
-        Optional<FriendRequest> existingRequest = friendRequestRepository.findByRequesterAndRequestedAndStatus(currentUser, receiver, FriendRequestStatus.ACCEPTED);
+        Optional<FriendRequest> existingRequest = friendRequestRepository.findByRequesterAndRequestedAndStatus(currentUser, receiver, FriendRequestStatus.PENDING);
+        Optional<FriendRequest> receiverExistingRequest = friendRequestRepository.findByRequesterAndRequestedAndStatus(receiver, currentUser, FriendRequestStatus.PENDING);
 
         boolean isAlreadyFriends = receiver.getFriends().contains(currentUser);
 
-        if (existingRequest.isPresent())
+        if (existingRequest.isPresent() || receiverExistingRequest.isPresent())
             throw new InvalidRequestException(EMessage.FRIEND_REQUEST_ALREADY_SENT.name());
         if(isAlreadyFriends)
             throw new InvalidRequestException(EMessage.ALREADY_FRIENDS.name());
@@ -86,11 +87,11 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
         User requested = request.getRequested();
 
         User currentUser = getCurrentUser();
-        if(!currentUser.equals(requester) && !currentUser.equals(requested))
+        if(!currentUser.equals(requested))
             throw new InvalidRequestException(EMessage.REQUEST_NOT_ALLOWED.name());
 
-        boolean isAlreadyFriends = requester.getFriends().contains(requested) &&
-                requested.getFriends().contains(requester);
+        boolean isAlreadyFriends = requester.getFriends().contains(currentUser) &&
+                currentUser.getFriends().contains(requester);
 
         if(request.getStatus() != FriendRequestStatus.PENDING)
             throw new ResourceNotFoundException(EMessage.FRIEND_REQUEST_NOT_FOUND.name());
