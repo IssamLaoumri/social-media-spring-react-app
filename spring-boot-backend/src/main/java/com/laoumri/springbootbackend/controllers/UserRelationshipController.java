@@ -18,14 +18,14 @@ public class UserRelationshipController {
         return ResponseEntity.status(HttpStatus.OK).body(userRelationshipService.addFriend(receiverId));
     }
 
-    @DeleteMapping("/delete/{userId}")
-    public ResponseEntity<MessageResponse> cancelFriendRequest(@PathVariable int userId){
-        return ResponseEntity.status(HttpStatus.OK).body(userRelationshipService.cancelFriendRequest(userId));
+    @DeleteMapping("/delete/{requestId}")
+    public ResponseEntity<MessageResponse> cancelFriendRequest(@PathVariable int requestId){
+        return ResponseEntity.status(HttpStatus.OK).body(userRelationshipService.cancelFriendRequest(requestId));
     }
 
-    @PostMapping("/accept/{senderId}")
-    public ResponseEntity<MessageResponse> acceptFriendRequest(@PathVariable int senderId){
-        return ResponseEntity.status(HttpStatus.OK).body(userRelationshipService.acceptFriendRequest(senderId));
+    @PostMapping("/accept/{requestId}")
+    public ResponseEntity<MessageResponse> acceptFriendRequest(@PathVariable int requestId){
+        return ResponseEntity.status(HttpStatus.OK).body(userRelationshipService.acceptFriendRequest(requestId));
     }
 
     @DeleteMapping("/unfriend/{senderId}")

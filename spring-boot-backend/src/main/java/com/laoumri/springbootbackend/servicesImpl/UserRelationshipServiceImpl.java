@@ -32,7 +32,7 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
         User receiver = getParamUser(receiverId, currentUser);
 
         // Check if the request is already sent or the requested and requester are already friends
-        Optional<FriendRequest> existingRequest = friendRequestRepository.findByRequesterAndRequested(currentUser, receiver);
+        Optional<FriendRequest> existingRequest = friendRequestRepository.findByRequesterAndRequestedAndStatus(currentUser, receiver, FriendRequestStatus.ACCEPTED);
 
         boolean isAlreadyFriends = receiver.getFriends().contains(currentUser);
 
@@ -56,47 +56,54 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
 
     @Override
     public MessageResponse cancelFriendRequest(int requestId) {
-        Optional<FriendRequest> request = friendRequestRepository.findById(requestId);
-        User requester = request.get().getRequester();
-        User requested = request.get().getRequested();
+        FriendRequest request = friendRequestRepository.findById(requestId).orElseThrow(()-> new ResourceNotFoundException(EMessage.FRIEND_REQUEST_NOT_FOUND.name()));
+        User requester = request.getRequester();
+        User requested = request.getRequested();
 
         User currentUser = getCurrentUser();
         if(!currentUser.equals(requester) && !currentUser.equals(requested))
             throw new InvalidRequestException(EMessage.REQUEST_NOT_ALLOWED.name());
 
-
         boolean isAlreadyFriends = requester.getFriends().contains(requested) &&
                 requested.getFriends().contains(requester);
 
-        if(request.isEmpty())
+        if(request.getStatus() != FriendRequestStatus.PENDING)
             throw new ResourceNotFoundException(EMessage.FRIEND_REQUEST_NOT_FOUND.name());
         if (isAlreadyFriends)
             throw new InvalidRequestException(EMessage.ALREADY_FRIENDS.name());
 
-        friendRequestRepository.delete(request.get());
+
+        request.setStatus(FriendRequestStatus.CANCELED);
+        friendRequestRepository.save(request);
 
         return new MessageResponse(EMessage.FRIEND_REQUEST_CANCELED.name());
     }
 
     @Override
-    public MessageResponse acceptFriendRequest(int senderId) {
+    public MessageResponse acceptFriendRequest(int requestId) {
+        FriendRequest request = friendRequestRepository.findById(requestId).orElseThrow(()-> new ResourceNotFoundException(EMessage.FRIEND_REQUEST_NOT_FOUND.name()));
+        User requester = request.getRequester();
+        User requested = request.getRequested();
+
         User currentUser = getCurrentUser();
-        User sender = getParamUser(senderId, currentUser);
+        if(!currentUser.equals(requester) && !currentUser.equals(requested))
+            throw new InvalidRequestException(EMessage.REQUEST_NOT_ALLOWED.name());
 
-        Optional<FriendRequest> request = friendRequestRepository.findByRequesterAndRequested(sender, currentUser);
-        boolean isAlreadyFriends = currentUser.getFriends().contains(sender) && sender.getFriends().contains(currentUser);
+        boolean isAlreadyFriends = requester.getFriends().contains(requested) &&
+                requested.getFriends().contains(requester);
 
-        if(request.isEmpty() || request.get().getStatus() != FriendRequestStatus.PENDING)
+        if(request.getStatus() != FriendRequestStatus.PENDING)
             throw new ResourceNotFoundException(EMessage.FRIEND_REQUEST_NOT_FOUND.name());
-        if(isAlreadyFriends)
+        if (isAlreadyFriends)
             throw new InvalidRequestException(EMessage.ALREADY_FRIENDS.name());
 
-        currentUser.getFriends().add(sender);
-        sender.getFriends().add(currentUser);
-        userRepository.saveAll(Arrays.asList(sender, currentUser));
 
-        request.get().setStatus(FriendRequestStatus.ACCEPTED);
-        friendRequestRepository.save(request.get());
+        currentUser.getFriends().add(requester);
+        requester.getFriends().add(currentUser);
+        userRepository.saveAll(Arrays.asList(requester, currentUser));
+
+        request.setStatus(FriendRequestStatus.ACCEPTED);
+        friendRequestRepository.save(request);
 
         return new MessageResponse(EMessage.FRIEND_REQUEST_ACCEPTED.name());
     }
@@ -108,9 +115,22 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
         if(currentUser.getFriends().contains(friend) && friend.getFriends().contains(currentUser)){
             currentUser.getFriends().remove(friend);
             friend.getFriends().remove(currentUser);
+
+            // Remove any associated friend requests
+            Optional<FriendRequest> friendRequest = friendRequestRepository.findByRequesterAndRequestedAndStatus(currentUser, friend, FriendRequestStatus.ACCEPTED);
+            if (friendRequest.isPresent()) {
+                friendRequestRepository.delete(friendRequest.get());
+            }
+
+            Optional<FriendRequest> reverseFriendRequest = friendRequestRepository.findByRequesterAndRequestedAndStatus(friend, currentUser, FriendRequestStatus.ACCEPTED);
+            if (reverseFriendRequest.isPresent()) {
+                friendRequestRepository.delete(reverseFriendRequest.get());
+            }
+
             userRepository.saveAll(Arrays.asList(currentUser, friend));
             return new MessageResponse(EMessage.UNFRIEND_SUCCESSFUL.name());
         }
+
         throw new ResourceNotFoundException(EMessage.NOT_FRIENDS.name());
     }
 

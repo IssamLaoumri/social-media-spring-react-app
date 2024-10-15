@@ -41,18 +41,19 @@ public class UserServiceImpl implements UserService {
 
         // Initialise the state of the relationship {request sent, add friend, accept request, friends}
         RelationshipModel relationship = new RelationshipModel();
+        System.out.println(user.getFriends().contains(profile) && profile.getFriends().contains(user));
         if(user.getFriends().contains(profile) && profile.getFriends().contains(user))
             relationship.setAreFriends(true);
 
         // Check if the user has received a friend request from the profile user
-        Optional<FriendRequest> receivedRequest = friendRequestRepository.findByRequesterAndRequested(profile, user);
-        if (receivedRequest.isPresent() && receivedRequest.get().getStatus() == FriendRequestStatus.PENDING) {
+        Optional<FriendRequest> receivedRequest = friendRequestRepository.findByRequesterAndRequestedAndStatus(profile, user, FriendRequestStatus.PENDING);
+        if (receivedRequest.isPresent()) {
             relationship.setFriendRequestReceived(true);
         }
 
         // Check if the user has sent a friend request to the profile user
-        Optional<FriendRequest> sentRequest = friendRequestRepository.findByRequesterAndRequested(user, profile);
-        if (sentRequest.isPresent() && sentRequest.get().getStatus() == FriendRequestStatus.PENDING) {
+        Optional<FriendRequest> sentRequest = friendRequestRepository.findByRequesterAndRequestedAndStatus(user, profile,FriendRequestStatus.PENDING);
+        if (sentRequest.isPresent()) {
             relationship.setFriendRequestSent(true);
         }
 

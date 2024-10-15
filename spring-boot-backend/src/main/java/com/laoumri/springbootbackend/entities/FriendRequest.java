@@ -23,6 +23,7 @@ public class FriendRequest {
     @JoinColumn(name = "requested_id")
     private User requested;
     @Enumerated(EnumType.STRING)
+    @Column(length = 20)
     private FriendRequestStatus status;
     private Instant requestedAt;
 }
