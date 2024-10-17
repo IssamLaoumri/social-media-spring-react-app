@@ -2,7 +2,9 @@ package com.laoumri.springbootbackend.servicesImpl;
 
 import com.laoumri.springbootbackend.Exceptions.AccessDeniedException;
 import com.laoumri.springbootbackend.Exceptions.InvalidEnumException;
+import com.laoumri.springbootbackend.Exceptions.InvalidRequestException;
 import com.laoumri.springbootbackend.dto.requests.CreatePostRequest;
+import com.laoumri.springbootbackend.dto.requests.MediaRequest;
 import com.laoumri.springbootbackend.dto.responses.MessageResponse;
 import com.laoumri.springbootbackend.entities.Media;
 import com.laoumri.springbootbackend.entities.Post;
@@ -19,6 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -42,6 +45,8 @@ public class PostServiceImpl implements PostService {
             throw new InvalidEnumException("Invalid post type: " + request.getType());
         }
 
+        validateProfileOrCoverPicture(request);
+
         Post post = Post.builder()
                 .content(request.getContent())
                 .user(user)
@@ -60,7 +65,7 @@ public class PostServiceImpl implements PostService {
 
                     return Media.builder()
                             .url(mediaRequest.getUrl())
-                            .post(post)
+                            //.post(post)
                             .type(mediaType)
                             .build();
                 }).toList() : null;
@@ -87,6 +92,20 @@ public class PostServiceImpl implements PostService {
         return new MessageResponse("Post deleted successfully.");
     }
 
+    private void validateProfileOrCoverPicture(CreatePostRequest request) {
+        String type = request.getType();
+
+        // Return early if the type is not COVER_PICTURE or PROFILE_PICTURE
+        if (!EnumSet.of(EPost.COVER_PICTURE, EPost.PROFILE_PICTURE).contains(EPost.valueOf(type))) {
+            return;
+        }
+
+        List<MediaRequest> medias = request.getMedias();
+
+        if (medias.size() != 1 || !medias.get(0).getType().equals(EMedia.IMAGE.name())) {
+            throw new InvalidRequestException("Profile and cover must contain exactly one picture of type IMAGE.");
+        }
+    }
 
 
 }

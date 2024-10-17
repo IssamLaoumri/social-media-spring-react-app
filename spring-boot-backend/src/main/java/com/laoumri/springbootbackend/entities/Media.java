@@ -20,7 +20,7 @@ public class Media {
     @Enumerated(EnumType.STRING)
     private EMedia type;
     private String url;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id")
-    private Post post;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "post_id")
+//    private Post post;
 }

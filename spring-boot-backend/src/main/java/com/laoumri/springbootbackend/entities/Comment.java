@@ -1,13 +1,9 @@
 package com.laoumri.springbootbackend.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.Instant;
-import java.util.List;
 
 @Entity
 @Table(name = "comments")
@@ -15,12 +11,14 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Comment {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    private boolean isUpdated;
     private String content;
-    @OneToOne(fetch = FetchType.EAGER)
-    private Media medias;
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Media media;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "post_id")
     private Post post;
